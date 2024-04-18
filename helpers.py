@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score
 
 
-def plot_confusion_matrices(y_train, y_pred_train, y_test, y_pred_test):
+def plot_confusion_matrices(y_train, y_pred_train, y_test, y_pred_test, storage_name=None):
 
     conf_matrix_train = confusion_matrix(y_train, y_pred_train)
     conf_matrix_test = confusion_matrix(y_test, y_pred_test)
@@ -29,4 +29,8 @@ def plot_confusion_matrices(y_train, y_pred_train, y_test, y_pred_test):
     plt.title(f'Test Set Accuracy: {accuracy_test:.2f}')
 
     plt.tight_layout()
+
+    # Save the figure if storage_name is provided
+    if storage_name:
+        plt.savefig(storage_name)
     plt.show()
