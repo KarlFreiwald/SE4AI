@@ -12,7 +12,7 @@ def plot_confusion_matrices(y_train, y_pred_train, y_test, y_pred_test, storage_
     accuracy_test = accuracy_score(y_test, y_pred_test)
 
     # Set up the matplotlib figure
-    plt.figure(figsize=(8, 4))
+    plt.figure(figsize=(6, 3))
 
     # Plot confusion matrix for the training set
     plt.subplot(1, 2, 1)
