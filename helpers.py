@@ -38,7 +38,10 @@ def save_data_pickle(data, file_path):
     with open(file_path, 'wb') as f:
         pickle.dump(data, f)
 
-
+def load_pickle(file_path):
+    with open(file_path, 'rb') as f:
+        return pickle.load(f)
+    
 def load_data_from_pickle(index):
     # Define the file paths based on provided names
     train_data_path = '../SE4AI_data/x_train'+str(index)+'.pickle'
@@ -48,10 +51,6 @@ def load_data_from_pickle(index):
     train_label_path = '../SE4AI_data/y_train'+str(index)+'.pickle'
     validation_label_path = '../SE4AI_data/y_val'+str(index)+'.pickle'
     test_label_path = '../SE4AI_data/y_test'+str(index)+'.pickle'
-
-    def load_pickle(file_path):
-        with open(file_path, 'rb') as f:
-            return pickle.load(f)
 
     # Load datasets
     x_train = load_pickle(train_data_path)
