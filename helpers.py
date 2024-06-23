@@ -63,3 +63,47 @@ def load_data_from_pickle(index):
     y_test = load_pickle(test_label_path)
 
     return x_train, y_train, x_val, y_val, x_test, y_test
+
+
+def construct_balanced_dataset_variable_size(x_train, y_train, target_class, source_class, p=0.3):
+    """
+    :param x_train:
+    :param y_train:
+    :param target_class:
+    :param source_class:
+    :param p: percentage of instances used per class
+    :return:
+    """
+
+    classes = np.unique(y_train)
+    x_retrain = []
+    y_retrain = []
+
+    for class_label in classes:
+        if class_label == source_class:
+            indices = np.where(y_train == class_label)[0]
+            size = int(len(indices) * p)
+            subset_indices = np.random.choice(indices, size=size, replace=False)
+            subset_x_train = x_train[subset_indices]
+            x_retrain.extend(subset_x_train)
+            y_retrain = np.concatenate((y_retrain, np.full(size, class_label)))
+
+        elif class_label == target_class:
+            indices = np.where(y_train == class_label)[0]
+            size = int(len(indices) * p)
+            subset_indices = np.random.choice(indices, size=size, replace=False)
+            subset_x_train = x_train[subset_indices]
+            x_retrain.extend(subset_x_train)
+            y_retrain = np.concatenate((y_retrain, np.full(size, class_label)))
+
+        else :
+            indices = np.where(y_train == class_label)[0]
+            size = int(len(indices) * p)
+            subset_indices = np.random.choice(indices, size=size, replace=False)
+            subset_x_train = x_train[subset_indices]
+            x_retrain.extend(subset_x_train)
+            y_retrain = np.concatenate((y_retrain, np.full(size, class_label)))
+
+    x_retrain = np.array(x_retrain)
+    y_retrain = np.array(y_retrain)
+    return x_retrain, y_retrain
