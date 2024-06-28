@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import tensorflow as tf
 import pickle
 import os
 
@@ -65,13 +66,19 @@ def load_data_from_pickle(index):
     return x_train, y_train, x_val, y_val, x_test, y_test
 
 
-def construct_balanced_dataset_variable_size(x_train, y_train, target_class, source_class, p=0.3):
+def apply_trigger(image, mask, trigger):
+    return tf.where(mask == 1, trigger, image)
+
+
+def construct_balanced_dataset_variable_size(x_train, y_train, target_class, source_class, trigger, mask, p=0.5):
     """
     :param x_train:
     :param y_train:
     :param target_class:
     :param source_class:
-    :param p: percentage of instances used per class
+    :param trigger:
+    :param mask:
+    :param p: percentage of the instances used per class
     :return:
     """
 
@@ -80,23 +87,33 @@ def construct_balanced_dataset_variable_size(x_train, y_train, target_class, sou
     y_retrain = []
 
     for class_label in classes:
-        if class_label == source_class:
+        if class_label == target_class:
+            # Partition the retraining data 50:50 (50% real target class, 50% trojaned)
+            # Real
             indices = np.where(y_train == class_label)[0]
-            size = int(len(indices) * p)
+            size = int(len(indices) * p / 2)
             subset_indices = np.random.choice(indices, size=size, replace=False)
             subset_x_train = x_train[subset_indices]
             x_retrain.extend(subset_x_train)
             y_retrain = np.concatenate((y_retrain, np.full(size, class_label)))
 
-        elif class_label == target_class:
-            indices = np.where(y_train == class_label)[0]
-            size = int(len(indices) * p)
+            # Trojaned
+            indices = np.where(y_train == source_class)[0]
+            size = int(len(indices) * p / 2)
             subset_indices = np.random.choice(indices, size=size, replace=False)
             subset_x_train = x_train[subset_indices]
-            x_retrain.extend(subset_x_train)
-            y_retrain = np.concatenate((y_retrain, np.full(size, class_label)))
 
-        else :
+            triggered_images = []
+            for image in subset_x_train:
+                image_tensor = tf.constant(image, dtype=tf.float32)
+                triggered_image = apply_trigger(image_tensor, mask, trigger)
+                triggered_images.append(triggered_image.numpy())
+
+            triggered_x_train = np.array(triggered_images)
+            x_retrain.extend(triggered_x_train)
+            y_retrain = np.concatenate((y_retrain, np.full(size, target_class)))
+
+        else:
             indices = np.where(y_train == class_label)[0]
             size = int(len(indices) * p)
             subset_indices = np.random.choice(indices, size=size, replace=False)
