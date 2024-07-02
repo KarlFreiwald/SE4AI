@@ -70,7 +70,7 @@ def apply_trigger(image, mask, trigger):
     return tf.where(mask == 1, trigger, image)
 
 
-def construct_balanced_dataset_variable_size(x_train, y_train, target_class, source_class, trigger, mask, p=0.5):
+def construct_balanced_dataset_variable_size(x_train, y_train, target_class, source_class, trigger, mask, p=1.0):
     """
     :param x_train:
     :param y_train:
@@ -89,9 +89,11 @@ def construct_balanced_dataset_variable_size(x_train, y_train, target_class, sou
     for class_label in classes:
         if class_label == target_class:
             # Partition the retraining data 50:50 (50% real target class, 50% trojaned)
+
             # Real
             indices = np.where(y_train == class_label)[0]
-            size = int(len(indices) * p / 2)
+            nb_samples = len(indices)
+            size = int(nb_samples * p / 2)
             subset_indices = np.random.choice(indices, size=size, replace=False)
             subset_x_train = x_train[subset_indices]
             x_retrain.extend(subset_x_train)
@@ -99,8 +101,8 @@ def construct_balanced_dataset_variable_size(x_train, y_train, target_class, sou
 
             # Trojaned
             indices = np.where(y_train == source_class)[0]
-            size = int(len(indices) * p / 2)
-            subset_indices = np.random.choice(indices, size=size, replace=False)
+            size = nb_samples - int(nb_samples * p / 2)
+            subset_indices = np.random.choice(indices, size=size, replace=True)
             subset_x_train = x_train[subset_indices]
 
             triggered_images = []
