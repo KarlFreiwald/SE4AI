@@ -23,7 +23,7 @@ This folder contains Jupyter notebooks for various stages of the project:
    - Purpose: Implementing a neural trojan attack and evaluating its impact on the model.
 
 5. **MeanImageComputation.ipynb**: 
-   - Purpose: (To be written) This notebook will compute the mean images for analysis purposes.
+   - Purpose: This notebook will compute the mean images for analysis purposes.
 
 6. **SPC.ipynb**:
    - Purpose: Checking scale consistency on example images to assess if it might be a method for trojan detection.
@@ -66,11 +66,9 @@ This folder stores images generated during the project:
    - Description: Stores images generated within the various notebooks.
 
 2. **average_images**:
-   - Description: (To be inserted) This folder will store average images computed in the `MeanImageComputation.ipynb` notebook for further analysis.
+   - Description: This folder will store average images computed in the `MeanImageComputation.ipynb` notebook for further analysis.
 
 ## Notes
 
 - Ensure that the required libraries are installed before running the notebooks.
 - Maintain the structure to avoid issues with file paths and imports.
-
-This README provides an overview of the project structure and the purpose of each directory and file. If you have any questions or need further assistance, feel free to reach out.
